@@ -1,6 +1,6 @@
 # TaB - Take a Break
 
-A simple app that uses notifications to remind you to take periodic breaks throughout the day.
+A simple app built with Node.js that uses notifications to remind you to take periodic breaks throughout the day.
 
 ## Documentation:
 
