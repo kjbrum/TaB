@@ -28,7 +28,8 @@ app.on('ready', function() {
         height: 300,
         resizable: false,
         center: true,
-        frame: false
+        frame: false,
+        transparent: true
     });
 
     // Load the html file
