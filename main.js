@@ -6,8 +6,6 @@ var app = require('app');  // Module to control application life.
 var Menu = require('menu');
 var Tray = require('tray');
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
-var notifier = require('node-notifier');
-var NotificationCenter = require('node-notifier').NotificationCenter;
 
 // Global reference of the window object
 var win = null;
@@ -19,37 +17,18 @@ app.on('window-all-closed', function() {
 
 // Initialization completed
 app.on('ready', function() {
-
     new buildTrayMenu();
-
-    // Create the browser window
-    win = new BrowserWindow({
-        width: 500,
-        height: 300,
-        resizable: false,
-        center: true,
-        frame: false,
-        transparent: true
-    });
-
-    // Load the html file
-    win.loadUrl('file://' + __dirname + '/index.html');
-
-    win.webContents.on('did-finish-load', function() {
-        // new initialNotification();
-    });
-
-    // Window has been closed
-    win.on('closed', function() {
-        // Dereference the window object
-        win = null;
-    });
+    new setupBrowser();
 });
 
 var buildTrayMenu = function() {
+    var trayIcon, template, menu;
+
+    // Set the tray icon
+    trayIcon = new Tray(__dirname + '/icon.png');
+
     // Setup the dropdown in the menubar
-    var trayIcon = new Tray(__dirname + '/icon.png');
-    var template = [
+    template = [
         {
             label: 'About TaB',
             selector: 'orderFrontStandardAboutPanel:'
@@ -59,9 +38,7 @@ var buildTrayMenu = function() {
             submenu: [
                 {
                     label: 'Launch at Login',
-                    click: function() {
-                        app.quit();
-                    }
+                    type: 'checkbox'
                 },
                 {
                     label: 'Something else',
@@ -82,45 +59,36 @@ var buildTrayMenu = function() {
             }
         }
     ];
-    var menu = Menu.buildFromTemplate(template);
+    menu = Menu.buildFromTemplate(template);
     trayIcon.setContextMenu(menu);
 
     // Bounce the Dock icon
     app.dock.bounce();
 }
 
-var initialNotification = function() {
-    var start = new NotificationCenter();
-    start.notify({
-        title: '20-20-20',
-        subtitle: 'Start',
-        message: 'Starting TaB notifications',
-        sound: 'Purr',
-        wait: false
-    }, function (err, response) {
-        console.log('callback', response);
+var setupBrowser = function() {
+    var browser;
+
+    // Create the browser window
+    browser = new BrowserWindow({
+        width: 500,
+        height: 300,
+        resizable: false,
+        center: true,
+        frame: false,
+        transparent: true
     });
 
-    // Check if notification is clicked
-    start.on('click', function (notifierObject, options) {
-        console.log('clicked', notifierObject, options);
+    // Load the html file
+    browser.loadUrl('file://' + __dirname + '/index.html');
+
+    // Window has been loaded
+    browser.webContents.on('did-finish-load', function() {
+        // Stuff to do when browser is loaded
     });
 
-    // Check if the notification times out
-    start.on('timeout', function (notifierObject, options) {
-        console.log('timeout', notifierObject, options);
-    });
-}
-
-var startRestCountdown = function() {
-    notifier.notify({
-        title: '20-20-20',
-        subtitle: 'Rest',
-        message: 'Take a break, you deserve it',
-        // open: 'http://kylebrumm.com',
-        sound: 'Purr',
-        wait: true
-    }, function (err, response) {
-        console.log('callback', response);
+    // Window has been closed
+    browser.on('closed', function() {
+        browser = null;    // Dereference the window object
     });
 }
