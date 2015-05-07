@@ -3,7 +3,9 @@ var NotificationCenter = require('node-notifier').NotificationCenter;
 
 var Notifications = {
     title: '20-20-20',
-    initialize: function() {
+    interval: 20,
+    initialize: function(interval) {
+        this.interval = interval;
         var start = new NotificationCenter();
         var that = this;
         start.notify({
@@ -18,7 +20,7 @@ var Notifications = {
 
         // Check if notification is clicked
         start.on('click', function (notifierObject, options) {
-            that.startCounter();
+            that.startCounter(that.interval);
         });
 
         // Check if the notification times out
@@ -41,4 +43,4 @@ var Notifications = {
     }
 }
 
-Notifications.initialize();
+Notifications.initialize(15);
